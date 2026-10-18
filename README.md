@@ -13,7 +13,7 @@ Simply by clicking [here] you will be redirected to the game page, and you can u
 
 PLEASE NOTE: this game is not yet compatible for mobile, only computers.
 
-## Credtis:
+## Credits:
 -
 -  
 ---
