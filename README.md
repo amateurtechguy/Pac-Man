@@ -25,8 +25,8 @@ As a beginner, it is really hard to keep track on a lot of lines of code, wherev
 
 
 ## Credits:
--
--  
+- [tutorial](https://youtu.be/WxeTMsaSOaA?si=R-mmcfEcayZvxeGH)
+-  another tutorial I unfortunately couldn't find because I was on a private browser
 ---
 
 ## Creator:
