@@ -18,7 +18,12 @@ PLEASE NOTE: this game is not yet compatible for mobile, only computers.
 - HTML
 - CSS
 - Javascript
-  
+
+## Why did I make this?
+
+As a beginner, it is really hard to keep track on a lot of lines of code, wherever I go, I see people who have years of experience and have their code memorized, I however don't. So making this helped me learn and develop and it also helps create a coding pattern in my brain that will make coding a lot faster and easier for me.
+
+
 ## Credits:
 -
 -  
