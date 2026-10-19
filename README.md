@@ -1,6 +1,9 @@
 # Pac Man
 Pac-Man, created by Toru Iwatani, is the titular main protagonist of the Pac-Man series and the longtime mascot of Namco and its successor company, Bandai Namco Entertainment. This game is loved by many and engraved in millions of people's minds. We all love pac man, so why not play it again in 2026?
 
+<img width="385" height="410" alt="Screenshot 2026-10-19 184905" src="https://github.com/user-attachments/assets/1368a080-bf47-4cb7-808d-c64906ebb8a5" />
+
+
 ## What is this?
 
 This is the classic Pac man game from the 80s, everyone loves this game, so this is a remake by a web dev beginner!
