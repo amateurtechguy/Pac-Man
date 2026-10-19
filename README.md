@@ -9,7 +9,7 @@ Hope you enjoy this game, because I worked really hard on it:O
 
 ## How to use? 
 
-Simply by clicking [here] you will be redirected to the game page, and you can use your arrow keys to move around.
+Simply by clicking [here](https://amateurtechguy.github.io/Pac-Man/) you will be redirected to the game page, and you can use your arrow keys to move around.
 
 PLEASE NOTE: this game is not yet compatible for mobile, only computers.
 
