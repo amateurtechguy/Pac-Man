@@ -1,5 +1,4 @@
 import MovingDirection from "./MovingDirection.js";
-
 export default class Pacman {
   constructor(x, y, tileSize, velocity, tileMap) {
     this.x = x;
@@ -7,43 +6,35 @@ export default class Pacman {
     this.tileSize = tileSize;
     this.velocity = velocity;
     this.tileMap = tileMap;
-
     this.currentMovingDirection = null;
     this.requestedMovingDirection = null;
-
     this.pacmanAnimationTimerDefault = 10;
     this.pacmanAnimationTimer = null;
-
     this.pacmanRotation = this.Rotation.right;
     this.wakaSound = new Audio("sounds/waka.wav");
-
     this.powerDotSound = new Audio("sounds/power_dot.wav");
     this.powerDotActive = false;
     this.powerDotAboutToExpire = false;
     this.timers = [];
-
     this.eatGhostSound = new Audio("sounds/eat_ghost.wav");
-
     this.madeFirstMove = false;
-
     document.addEventListener("keydown", this.#keydown);
-
     this.#loadPacmanImages();
   }
-
   Rotation = {
     right: 0,
     down: 1,
     left: 2,
     up: 3,
   };
-
   draw(ctx, pause, enemies) {
     if (!pause) {
       this.#move();
       this.#animate();
     }
     this.#eatDot();
+    this.#eatPowerDot();
+    this.#eatGhost(enemies);
     const size = this.tileSize / 2;
     ctx.save();
     ctx.translate(this.x + size, this.y + size);
@@ -57,30 +48,23 @@ export default class Pacman {
     );
     ctx.restore();
   }
-
   #loadPacmanImages() {
     const pacmanImage1 = new Image();
     pacmanImage1.src = "images/pac0.png";
-
     const pacmanImage2 = new Image();
     pacmanImage2.src = "images/pac1.png";
-
     const pacmanImage3 = new Image();
     pacmanImage3.src = "images/pac2.png";
-
     const pacmanImage4 = new Image();
     pacmanImage4.src = "images/pac1.png";
-
     this.pacmanImages = [
       pacmanImage1,
       pacmanImage2,
       pacmanImage3,
       pacmanImage4,
     ];
-
     this.pacmanImageIndex = 0;
   }
-
   #keydown = (event) => {
     if (event.keyCode == 38) {
       if (this.currentMovingDirection == MovingDirection.down)
@@ -107,7 +91,6 @@ export default class Pacman {
       this.madeFirstMove = true;
     }
   };
-
   #move() {
     if (this.currentMovingDirection !== this.requestedMovingDirection) {
       if (
@@ -124,7 +107,6 @@ export default class Pacman {
           this.currentMovingDirection = this.requestedMovingDirection;
       }
     }
-
     if (
       this.tileMap.didCollideWithEnvironment(
         this.x,
@@ -141,7 +123,6 @@ export default class Pacman {
     ) {
       this.pacmanAnimationTimer = this.pacmanAnimationTimerDefault;
     }
-
     switch (this.currentMovingDirection) {
       case MovingDirection.up:
         this.y -= this.velocity;
@@ -161,7 +142,6 @@ export default class Pacman {
         break;
     }
   }
-
   #animate() {
     if (this.pacmanAnimationTimer == null) {
       return;
@@ -174,6 +154,36 @@ export default class Pacman {
         this.pacmanImageIndex = 0;
     }
   }
-
-  #eatDot() {}
+  #eatDot() {
+    if (this.tileMap.eatDot(this.x, this.y) && this.madeFirstMove) {
+      this.wakaSound.play();
+    }
+  }
+  #eatPowerDot() {
+    if (this.tileMap.eatPowerDot(this.x, this.y)) {
+      this.powerDotSound.play();
+      this.powerDotActive = true;
+      this.powerDotAboutToExpire = false;
+      this.timers.forEach((timer) => clearTimeout(timer));
+      this.timers = [];
+      let powerDotTimer = setTimeout(() => {
+        this.powerDotActive = false;
+        this.powerDotAboutToExpire = false;
+      }, 1000 * 6);
+      this.timers.push(powerDotTimer);
+      let powerDotAboutToExpireTimer = setTimeout(() => {
+        this.powerDotAboutToExpire = true;
+      }, 1000 * 3);
+      this.timers.push(powerDotAboutToExpireTimer);
+    }
+  }
+  #eatGhost(enemies) {
+    if (this.powerDotActive) {
+      const collideEnemies = enemies.filter((enemy) => enemy.collideWith(this));
+      collideEnemies.forEach((enemy) => {
+        enemies.splice(enemies.indexOf(enemy), 1);
+        this.eatGhostSound.play();
+      });
+    }
+  }
 }

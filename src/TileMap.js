@@ -177,4 +177,33 @@ export default class TileMap {
     }
     return false;
   }
+  didWin() {
+    return this.#dotsLeft() === 0;
+  }
+  #dotsLeft() {
+    return this.map.flat().filter((tile) => tile === 0).length;
+  }
+  eatDot(x, y) {
+    const row = y / this.tileSize;
+    const column = x / this.tileSize;
+    if (Number.isInteger(row) && Number.isInteger(column)) {
+      if (this.map[row][column] === 0) {
+        this.map[row][column] = 5;
+        return true;
+      }
+    }
+    return false;
+  }
+  eatPowerDot(x, y) {
+    const row = y / this.tileSize;
+    const column = x / this.tileSize;
+    if (Number.isInteger(row) && Number.isInteger(column)) {
+      const tile = this.map[row][column];
+      if (tile === 7) {
+        this.map[row][column] = 5;
+        return true;
+      }
+    }
+    return false;
+  }
 }
