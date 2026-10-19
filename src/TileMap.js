@@ -1,4 +1,5 @@
 import Pacman from "./pacman.js";
+import MovingDirection from "../src/MovingDirection.js";
 export default class TileMap {
   constructor(tileSize) {
     this.tileSize = tileSize;
@@ -77,5 +78,46 @@ export default class TileMap {
   setCanvasSize(canvas) {
     canvas.width = this.map[0].length * this.tileSize;
     canvas.height = this.map.length * this.tileSize;
+  }
+
+  didCollideWithEnvironment(x, y, direction) {
+    if (
+      !Number.isInteger(x / this.tileSize) ||
+      !Number.isInteger(y / this.tileSize)
+    ) {
+      return false;
+    }
+
+    let column = x / this.tileSize;
+    let row = y / this.tileSize;
+    switch (direction) {
+      case MovingDirection.right:
+        column++;
+        break;
+
+      case MovingDirection.left:
+        column--;
+        break;
+
+      case MovingDirection.up:
+        row--;
+        break;
+
+      case MovingDirection.down:
+        row++;
+        break;
+
+      default:
+        return false;
+    }
+    if (
+      row < 0 ||
+      row >= this.map.length ||
+      column < 0 ||
+      column >= this.map[row].length
+    ) {
+      return true;
+    }
+    return this.map[row][column] === 1;
   }
 }

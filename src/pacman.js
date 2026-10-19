@@ -9,12 +9,17 @@ export default class Pacman {
 
     this.currentMovingDirection = null;
     this.requestedMovingDirection = null;
+
+    this.pacmanAnimationTimerDefault = 10;
+    this.pacmanAnimationTimer = null;
+
     document.addEventListener("keydown", this.#keydown);
 
     this.#loadPacmanImages();
   }
   draw(ctx) {
     this.#move();
+    this.#animate();
     ctx.drawImage(
       this.pacmanImages[this.pacmanImageIndex],
       this.x,
@@ -33,10 +38,15 @@ export default class Pacman {
     const pacmanImage3 = new Image();
     pacmanImage3.src = "../images/pac2.png";
 
-    //const pacmanImage4 = new Image();
-    //pacmanImage4.src = "../images/pac3.png";
+    const pacmanImage4 = new Image();
+    pacmanImage4.src = "../images/pac1.png";
 
-    this.pacmanImages = [pacmanImage1, pacmanImage2, pacmanImage3];
+    this.pacmanImages = [
+      pacmanImage1,
+      pacmanImage2,
+      pacmanImage3,
+      pacmanImage4,
+    ];
     this.pacmanImageIndex = 0;
   }
   #keydown = (event) => {
@@ -61,28 +71,58 @@ export default class Pacman {
       this.requestedMovingDirection = MovingDirection.right;
     }
   };
+
   #move() {
-    if (this.currentMovingDirection !== this.requestedMovingDirection) {
+    if (
+      this.requestedMovingDirection !== this.currentMovingDirection &&
+      Number.isInteger(this.x / this.tileSize) &&
+      Number.isInteger(this.y / this.tileSize)
+    ) {
       if (
-        Number.isInteger(this.x / this.tileSize) &&
-        Number.isInteger(this.y / this.tileSize)
+        !this.tileMap.didCollideWithEnvironment(
+          this.x,
+          this.y,
+          this.requestedMovingDirection,
+        )
       ) {
         this.currentMovingDirection = this.requestedMovingDirection;
       }
+    }
+    if (
+      this.currentMovingDirection !== null &&
+      this.tileMap.didCollideWithEnvironment(
+        this.x,
+        this.y,
+        this.currentMovingDirection,
+      )
+    ) {
+      return;
     }
     switch (this.currentMovingDirection) {
       case MovingDirection.up:
         this.y -= this.velocity;
         break;
+
       case MovingDirection.down:
         this.y += this.velocity;
         break;
+
       case MovingDirection.left:
         this.x -= this.velocity;
         break;
+
       case MovingDirection.right:
         this.x += this.velocity;
         break;
+    }
+  }
+  #animate() {
+    if (this.pacmanAnimationTimer == null) {
+      return;
+    }
+    this.pacmanAnimationTimer--;
+    if (this.pacmanAnimationTimer == 0) {
+      this.pacmanAnimationTimer = this.pacmanAnimationTimerDefault;
     }
   }
 }
