@@ -123,6 +123,9 @@ export default class Pacman {
     this.pacmanAnimationTimer--;
     if (this.pacmanAnimationTimer == 0) {
       this.pacmanAnimationTimer = this.pacmanAnimationTimerDefault;
+      this.pacmanImageIndex++;
+      if (this.pacmanImageIndex == this.pacmanImages.length)
+        this.pacmanImageIndex = 0;
     }
   }
 }
