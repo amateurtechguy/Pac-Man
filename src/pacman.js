@@ -1,4 +1,5 @@
-import MovingDirection from "../src/MovingDirection.js";
+import MovingDirection from "./MovingDirection.js";
+
 export default class Pacman {
   constructor(x, y, tileSize, velocity, tileMap) {
     this.x = x;
@@ -6,10 +7,13 @@ export default class Pacman {
     this.tileSize = tileSize;
     this.velocity = velocity;
     this.tileMap = tileMap;
+
     this.currentMovingDirection = null;
     this.requestedMovingDirection = null;
+
     this.pacmanAnimationTimerDefault = 10;
     this.pacmanAnimationTimer = null;
+
     this.pacmanRotation = this.Rotation.right;
     this.wakaSound = new Audio("sounds/waka.wav");
 
@@ -17,22 +21,29 @@ export default class Pacman {
     this.powerDotActive = false;
     this.powerDotAboutToExpire = false;
     this.timers = [];
+
     this.eatGhostSound = new Audio("sounds/eat_ghost.wav");
+
     this.madeFirstMove = false;
+
     document.addEventListener("keydown", this.#keydown);
+
     this.#loadPacmanImages();
   }
+
   Rotation = {
     right: 0,
     down: 1,
     left: 2,
     up: 3,
   };
+
   draw(ctx, pause, enemies) {
     if (!pause) {
       this.#move();
       this.#animate();
     }
+    this.#eatDot();
     const size = this.tileSize / 2;
     ctx.save();
     ctx.translate(this.x + size, this.y + size);
@@ -46,6 +57,7 @@ export default class Pacman {
     );
     ctx.restore();
   }
+
   #loadPacmanImages() {
     const pacmanImage1 = new Image();
     pacmanImage1.src = "images/pac0.png";
@@ -68,6 +80,7 @@ export default class Pacman {
 
     this.pacmanImageIndex = 0;
   }
+
   #keydown = (event) => {
     if (event.keyCode == 38) {
       if (this.currentMovingDirection == MovingDirection.down)
@@ -94,59 +107,41 @@ export default class Pacman {
       this.madeFirstMove = true;
     }
   };
+
   #move() {
-    if (this.requestedMovingDirection !== this.currentMovingDirection) {
-      const tolerance = this.velocity / 2;
-      const nearestX = Math.round(this.x / this.tileSize) * this.tileSize;
-      const nearestY = Math.round(this.y / this.tileSize) * this.tileSize;
-      const alignedX = Math.abs(this.x - nearestX) <= tolerance;
-      const alignedY = Math.abs(this.y - nearestY) <= tolerance;
-      if (alignedX && alignedY) {
-        this.x = nearestX;
-        this.y = nearestY;
+    if (this.currentMovingDirection !== this.requestedMovingDirection) {
+      if (
+        Number.isInteger(this.x / this.tileSize) &&
+        Number.isInteger(this.y / this.tileSize)
+      ) {
         if (
           !this.tileMap.didCollideWithEnvironment(
             this.x,
             this.y,
             this.requestedMovingDirection,
           )
-        ) {
+        )
           this.currentMovingDirection = this.requestedMovingDirection;
-        }
       }
     }
+
     if (
-      this.currentMovingDirection !== null &&
       this.tileMap.didCollideWithEnvironment(
         this.x,
         this.y,
         this.currentMovingDirection,
       )
     ) {
-      switch (this.currentMovingDirection) {
-        case MovingDirection.right:
-          this.x = Math.floor(this.x / this.tileSize) * this.tileSize;
-          break;
-        case MovingDirection.left:
-          this.x = Math.ceil(this.x / this.tileSize) * this.tileSize;
-          break;
-        case MovingDirection.down:
-          this.y = Math.floor(this.y / this.tileSize) * this.tileSize;
-          break;
-        case MovingDirection.up:
-          this.y = Math.ceil(this.y / this.tileSize) * this.tileSize;
-          break;
-      }
       this.pacmanAnimationTimer = null;
       this.pacmanImageIndex = 1;
       return;
-    }
-    if (
-      this.currentMovingDirection !== null &&
-      this.pacmanAnimationTimer === null
+    } else if (
+      this.currentMovingDirection != null &&
+      this.pacmanAnimationTimer == null
     ) {
       this.pacmanAnimationTimer = this.pacmanAnimationTimerDefault;
     }
+
     switch (this.currentMovingDirection) {
       case MovingDirection.up:
         this.y -= this.velocity;
@@ -166,6 +161,7 @@ export default class Pacman {
         break;
     }
   }
+
   #animate() {
     if (this.pacmanAnimationTimer == null) {
       return;
@@ -178,4 +174,6 @@ export default class Pacman {
         this.pacmanImageIndex = 0;
     }
   }
+
+  #eatDot() {}
 }
