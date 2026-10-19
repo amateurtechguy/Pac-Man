@@ -6,15 +6,11 @@ export default class Pacman {
     this.tileSize = tileSize;
     this.velocity = velocity;
     this.tileMap = tileMap;
-
     this.currentMovingDirection = null;
     this.requestedMovingDirection = null;
-
     this.pacmanAnimationTimerDefault = 10;
     this.pacmanAnimationTimer = null;
-
     document.addEventListener("keydown", this.#keydown);
-
     this.#loadPacmanImages();
   }
   draw(ctx) {
@@ -71,21 +67,25 @@ export default class Pacman {
       this.requestedMovingDirection = MovingDirection.right;
     }
   };
-
   #move() {
-    if (
-      this.requestedMovingDirection !== this.currentMovingDirection &&
-      Number.isInteger(this.x / this.tileSize) &&
-      Number.isInteger(this.y / this.tileSize)
-    ) {
-      if (
-        !this.tileMap.didCollideWithEnvironment(
-          this.x,
-          this.y,
-          this.requestedMovingDirection,
-        )
-      ) {
-        this.currentMovingDirection = this.requestedMovingDirection;
+    if (this.requestedMovingDirection !== this.currentMovingDirection) {
+      const tolerance = this.velocity / 2;
+      const nearestX = Math.round(this.x / this.tileSize) * this.tileSize;
+      const nearestY = Math.round(this.y / this.tileSize) * this.tileSize;
+      const alignedX = Math.abs(this.x - nearestX) <= tolerance;
+      const alignedY = Math.abs(this.y - nearestY) <= tolerance;
+      if (alignedX && alignedY) {
+        this.x = nearestX;
+        this.y = nearestY;
+        if (
+          !this.tileMap.didCollideWithEnvironment(
+            this.x,
+            this.y,
+            this.requestedMovingDirection,
+          )
+        ) {
+          this.currentMovingDirection = this.requestedMovingDirection;
+        }
       }
     }
     if (
@@ -96,21 +96,40 @@ export default class Pacman {
         this.currentMovingDirection,
       )
     ) {
+      switch (this.currentMovingDirection) {
+        case MovingDirection.right:
+          this.x = Math.floor(this.x / this.tileSize) * this.tileSize;
+          break;
+        case MovingDirection.left:
+          this.x = Math.ceil(this.x / this.tileSize) * this.tileSize;
+          break;
+        case MovingDirection.down:
+          this.y = Math.floor(this.y / this.tileSize) * this.tileSize;
+          break;
+        case MovingDirection.up:
+          this.y = Math.ceil(this.y / this.tileSize) * this.tileSize;
+          break;
+      }
+      this.pacmanAnimationTimer = null;
+      this.pacmanImageIndex = 1;
       return;
+    }
+    if (
+      this.currentMovingDirection !== null &&
+      this.pacmanAnimationTimer === null
+    ) {
+      this.pacmanAnimationTimer = this.pacmanAnimationTimerDefault;
     }
     switch (this.currentMovingDirection) {
       case MovingDirection.up:
         this.y -= this.velocity;
         break;
-
       case MovingDirection.down:
         this.y += this.velocity;
         break;
-
       case MovingDirection.left:
         this.x -= this.velocity;
         break;
-
       case MovingDirection.right:
         this.x += this.velocity;
         break;

@@ -81,32 +81,28 @@ export default class TileMap {
   }
 
   didCollideWithEnvironment(x, y, direction) {
-    if (
-      !Number.isInteger(x / this.tileSize) ||
-      !Number.isInteger(y / this.tileSize)
-    ) {
-      return false;
-    }
+    if (direction == null) return false;
 
-    let column = x / this.tileSize;
-    let row = y / this.tileSize;
+    let column = Math.round(x / this.tileSize);
+    let row = Math.round(y / this.tileSize);
+
     switch (direction) {
       case MovingDirection.right:
-        column++;
+        column = Math.floor((x + this.tileSize) / this.tileSize);
+        row = Math.round(y / this.tileSize);
         break;
-
       case MovingDirection.left:
-        column--;
+        column = Math.floor((x - 1) / this.tileSize);
+        row = Math.round(y / this.tileSize);
         break;
-
-      case MovingDirection.up:
-        row--;
-        break;
-
       case MovingDirection.down:
-        row++;
+        row = Math.floor((y + this.tileSize) / this.tileSize);
+        column = Math.round(x / this.tileSize);
         break;
-
+      case MovingDirection.up:
+        row = Math.floor((y - 1) / this.tileSize);
+        column = Math.round(x / this.tileSize);
+        break;
       default:
         return false;
     }
